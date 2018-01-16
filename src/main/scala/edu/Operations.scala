@@ -3,6 +3,7 @@ import org.apache.log4j.Logger
 
 class Operations {
   val randomGenerator = scala.util.Random
+  val randomLimiter: Int = 6
   val log = Logger.getLogger(this.getClass)
 
   def calculateBill(paymentMethod: Payment): String = {
@@ -16,7 +17,7 @@ class Operations {
   }
 
   def mainDice(): String = {
-    val diceNumber: Int = 6
+
     val limit = 3
 
     def diceGame(value: Int,counter: Int): Boolean = {
@@ -30,11 +31,11 @@ class Operations {
         }
         else {
           log.info(s"You got $value \n")//print(value)
-          diceGame(randomGenerator.nextInt(diceNumber) + 1,counter-1)
+          diceGame(randomGenerator.nextInt(randomLimiter) + 1,counter-1)
         }
       }
     }
-    if(diceGame(randomGenerator.nextInt(diceNumber) + 1,limit)){
+    if(diceGame(randomGenerator.nextInt(randomLimiter) + 1,limit)){
       "You win \n"
     }
     else {
@@ -43,8 +44,26 @@ class Operations {
   }
 
   def takeAttendance(): Int ={
-    randomGenerator.nextInt(50)+1
+    val classStrength = 50
+    randomGenerator.nextInt(classStrength) + 1
   }
 
-  def
+  def favouriteSubjectFinder(mainSubjectBlog: Map[String,Int],originalSubjectDomain: List[String]): String = {
+    val attempts: Int = 5
+    def favouriteSubjectCalculator(subjectBlog: Map[String,Int],counter: Int): Map[String,Int] = {
+      val subject = originalSubjectDomain(randomGenerator.nextInt(randomLimiter))
+      val subjectCount = subjectBlog get subject
+      val tempMap = subjectBlog + (subject -> (subjectCount.get + 1))
+      if(counter>0){
+        favouriteSubjectCalculator(tempMap,counter-1 )
+      }
+      else {
+        tempMap
+      }
+    }
+    val finalMap = favouriteSubjectCalculator(mainSubjectBlog,attempts)
+    val favouriteSubject = finalMap.maxBy(_._2) //ask this logic
+    favouriteSubject._1
+  }
+
 }
