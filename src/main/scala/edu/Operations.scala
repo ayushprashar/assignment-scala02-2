@@ -1,4 +1,5 @@
 package edu
+
 import org.apache.log4j.Logger
 
 class Operations {
@@ -16,26 +17,37 @@ class Operations {
     }
   }
 
-  def mainDice(): String = {
+  def personHandler(userType: Person): String = {
+    val subjectDomain = List("Scala", "Java", "C", "C++", "Node JS", "Angular JS")
+    val initialBlogCount = Map("Scala" -> 3, "Java" -> 4, "C" -> 1, "C++" -> 2, "Node JS" -> 2, "Angular JS" -> 2)
+    userType match {
+      case Gamer("Ayush") => s"${mainDice()} \n"
+      case Trainer("Ayush") => s"${takeAttendance()} \n"
+      case Blogger("Ayush") => s"${favouriteSubjectFinder(initialBlogCount, subjectDomain)}"
+    }
+  }
+
+  private def mainDice(): String = {
 
     val limit = 3
 
-    def diceGame(value: Int,counter: Int): Boolean = {
-      if(counter == 0){
+    def diceGame(value: Int, counter: Int): Boolean = {
+      if (counter == 0) {
         true
       }
-      else{
-        if(value != 1 && value != 6){
-          log.info(s"You got $value \n")//print(value)
+      else {
+        if (value != 1 && value != 6) {
+          log.info(s"You got $value \n") //print(value)
           false
         }
         else {
-          log.info(s"You got $value \n")//print(value)
-          diceGame(randomGenerator.nextInt(randomLimiter) + 1,counter-1)
+          log.info(s"You got $value \n") //print(value)
+          diceGame(randomGenerator.nextInt(randomLimiter) + 1, counter - 1)
         }
       }
     }
-    if(diceGame(randomGenerator.nextInt(randomLimiter) + 1,limit)){
+
+    if (diceGame(randomGenerator.nextInt(randomLimiter) + 1, limit)) {
       "You win \n"
     }
     else {
@@ -43,25 +55,27 @@ class Operations {
     }
   }
 
-  def takeAttendance(): Int ={
+  private def takeAttendance(): Int = {
     val classStrength = 50
     randomGenerator.nextInt(classStrength) + 1
   }
 
-  def favouriteSubjectFinder(mainSubjectBlog: Map[String,Int],originalSubjectDomain: List[String]): String = {
+  private def favouriteSubjectFinder(mainSubjectBlog: Map[String, Int], originalSubjectDomain: List[String]): String = {
     val attempts: Int = 5
-    def favouriteSubjectCalculator(subjectBlog: Map[String,Int],counter: Int): Map[String,Int] = {
+
+    def favouriteSubjectCalculator(subjectBlog: Map[String, Int], counter: Int): Map[String, Int] = {
       val subject = originalSubjectDomain(randomGenerator.nextInt(randomLimiter))
       val subjectCount = subjectBlog get subject
       val tempMap = subjectBlog + (subject -> (subjectCount.get + 1))
-      if(counter>0){
-        favouriteSubjectCalculator(tempMap,counter-1 )
+      if (counter > 0) {
+        favouriteSubjectCalculator(tempMap, counter - 1)
       }
       else {
         tempMap
       }
     }
-    val finalMap = favouriteSubjectCalculator(mainSubjectBlog,attempts)
+
+    val finalMap = favouriteSubjectCalculator(mainSubjectBlog, attempts)
     val favouriteSubject = finalMap.maxBy(_._2) //ask this logic
     favouriteSubject._1
   }
